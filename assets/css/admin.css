@@ -1,0 +1,8 @@
+.description-separator {
+    border: 0!important;
+    height: 1px!important;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #fafafa;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}

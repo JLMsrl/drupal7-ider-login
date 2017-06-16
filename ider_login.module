@@ -76,46 +76,104 @@ function ider_login_menu() {
  */
 function ider_login_form($form, &$form_state) {
 
-    $pluginPath = drupal_get_path('module', 'ider_login');
+    global $base_url;
+
+    // $pluginPath = drupal_get_path('module', 'ider_login');
 
     $form = array();
 
+    $pluginConfigDescription = '<h1>IDer Single Sign On Configuration</h1>';
+    $pluginConfigDescription .= '<p>This plugin is meant to be used with <a target="_blank" href="https://www.ider.com/">IDer Connect System</a></p>';
+    $pluginConfigDescription .= '<h5>Setting up IDer Client Account</h5>';
+    $pluginConfigDescription .= '<ol>';
+    $pluginConfigDescription .= '<li>Create a new client and set the Redirect URI (aka callback URL) to: <strong>http://www.istorex.it/idercallback</strong></li>';
+    $pluginConfigDescription .= '<li>Copy the Client ID and Client Secret in the text fields below.</li>';
+    $pluginConfigDescription .= '<li>Set the campaign id to retrieve the user data you chose.</li>';
+    $pluginConfigDescription .= '<li>If you open a custom campaign and want your customer to land on a specific page, please configure it in the advanced setting "Campaigns Landing pages" using the format <strong>&lt;Campaign id&gt;=&lt;Landing Page&gt;</strong></li>';
+    $pluginConfigDescription .= '<li>You can place the IDer button everywhere using widget, the classic form or the shortcode [ider_login_button]</li>';
+    $pluginConfigDescription .= '</ol>';
+    $pluginConfigDescription .= '<hr class="description-separator">';
+
     $form['ider_login_config_description'] = array(
-        '#markup' => variable_get('contact_form_information', t('You can leave us a message using the contact form below.')),
+        '#markup' => $pluginConfigDescription,
     );
 
     $form['#attached']['js'] = array(
         drupal_get_path('module', 'ider_login') . '/assets/js/admin.js',
     );
 
+    $form['#attached']['css'] = array(
+        drupal_get_path('module', 'ider_login') . '/assets/css/admin.css',
+    );
+
     $form['ider_login_client_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Client ID'),
+        '#value' => variable_get('ider_login_client_id', ''),
         '#required' => TRUE,
     );
 
     $form['ider_login_client_secret'] = array(
         '#type' => 'textfield',
         '#title' => t('Client Secret'),
+        '#value' => variable_get('ider_login_client_secret', ''),
         '#required' => TRUE,
     );
 
     $form['ider_login_scope_name'] = array(
         '#type' => 'textfield',
         '#title' => t('Scope Name'),
+        '#value' => variable_get('ider_login_scope_name', ''),
         '#required' => TRUE,
     );
 
-    $form['copy'] = array(
+    $form['ider_login_enable_in_login'] = array(
         '#type' => 'checkbox',
         '#title' => t('Add IDer button in the default Drupal login.'),
+        '#value' => variable_get('ider_login_enable_in_login', ''),
     );
 
-    $form['ider_login_message'] = array(
+    $form['ider_login_welcome_page'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Welcome Page'),
+        '#value' => variable_get('ider_login_welcome_page', ''),
+        '#required' => FALSE,
+        '#field_prefix' => rtrim($base_url, '/') . '/'
+    );
+
+    // Also aid in theming of field widgets by rendering a classified container.
+    $form['advanced_options'] = array(
+        '#type' => 'container',
+        '#weight' => 5,
+        '#attributes' => array(
+            'class' => array(
+                'contact-info',
+            ),
+        ),
+    );
+
+    $form['advanced_options']['ider_login_field_mapping'] = array(
         '#type' => 'textarea',
-        '#title' => t('IDer Single Sign On Configuration'),
-        '#rows' => 5,
+        '#title' => t('Field Mapping'),
+        '#rows' => 6,
+        '#value' => variable_get('ider_login_field_mapping', ''),
         '#required' => TRUE,
+    );
+
+    $form['advanced_options']['ider_login_campaigns_landing_pages'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Campaigns Landing pages'),
+        '#rows' => 6,
+        '#value' => variable_get('ider_login_campaigns_landing_pages', ''),
+        '#required' => FALSE,
+    );
+
+    $form['advanced_options']['ider_login_button_css'] = array(
+        '#type' => 'textarea',
+        '#title' => t('IDer Button additional css'),
+        '#rows' => 6,
+        '#value' => variable_get('ider_login_button_css', ''),
+        '#required' => FALSE,
     );
 
     return system_settings_form($form);
