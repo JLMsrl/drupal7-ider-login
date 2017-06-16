@@ -1,0 +1,16 @@
+{
+  "name": "jlmsrl/ider-login-drupal7",
+  "description": "IDER Login - Drupal 7 Plugin",
+  "keywords": [
+    "framework",
+    "ider",
+    "php",
+    "drupal",
+    "openid"
+  ],
+  "type": "project",
+  "minimum-stability": "dev",
+  "require": {
+    "jlmsrl/ider-openid-client-php": "dev-master"
+  }
+}
