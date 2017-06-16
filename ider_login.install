@@ -1,0 +1,43 @@
+<?php
+/**
+ * @file
+ * Install and uninstall functions for the IDer Login module.
+ */
+
+
+/**
+ * Implements hook_install().
+ */
+function ider_login_install() {
+  $field = array(
+      'type' => 'varchar',
+      'not null' => TRUE,
+      'default' => null,
+      'description' => 'IDer sub to recognize the user.',
+  );
+  $index = array(
+      'indexes' => array(
+          'sub' => array('sub')
+      ),
+  );
+  db_add_field('users', 'sub', $field, $index);
+}
+
+/**
+ * Implements hook_schema_alter().
+ */
+function ider_login_schema_alter(&$schema) {
+  $schema['users']['fields']['sub'] = array(
+      'type' => 'varchar',
+      'not null' => TRUE,
+      'default' => null,
+      'description' => 'IDer sub to recognize the user.',
+  );
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ider_login_uninstall() {
+  db_drop_field('users', 'sub');
+}

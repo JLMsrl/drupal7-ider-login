@@ -1,0 +1,6 @@
+name = IDer Login for Drupal
+description = This plugin provides functionality to register and connect to your Drupal via IDer Service.
+core = 7.x
+php = 5.4
+files[] = ider_login.module
+configure = admin/config/people/ider-login

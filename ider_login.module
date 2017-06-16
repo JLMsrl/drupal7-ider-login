@@ -1,0 +1,32 @@
+<?php
+/**
+* @file
+* This plugin provides functionality to register and connect to your Drupal via IDer Service.
+*/
+
+/**
+ * Implements hook_menu().
+ */
+function ider_login_menu() {
+    $items['admin/config/people/ider_login'] = array(
+        'title' => 'Welcome message configure',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('ider_login_form'),
+        'access arguments' => array('administer users'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+/**
+ * Admin form to configurable welcome message
+ */
+function ider_login_form($form, &$form_state) {
+    $form['ider_login_message'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Welcome message'),
+        '#rows' => 5,
+        '#required' => TRUE,
+    );
+    return system_settings_form($form);
+}
