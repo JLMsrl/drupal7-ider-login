@@ -4,29 +4,119 @@
 * This plugin provides functionality to register and connect to your Drupal via IDer Service.
 */
 
+if (!defined('IDER_MODULE_FILE')) {
+    define('IDER_MODULE_FILE', __FILE__);
+}
+
+/*
+if (!defined('IDER_MODULE_DIR')) {
+    define('IDER_MODULE_DIR', trailingslashit(plugin_dir_path(__FILE__)));
+}
+
+if (!defined('IDER_MODULE_URL')) {
+    define('IDER_MODULE_URL', trailingslashit(plugin_dir_url(__FILE__)));
+}
+*/
+
+if (!defined('IDER_CLIENT_VERSION')) {
+    define('IDER_CLIENT_VERSION', '0.0.1');
+}
+
+if (!defined('IDER_SITE_DOMAIN')) {
+    define('IDER_SITE_DOMAIN', implode(".", array_reverse(array_slice(array_reverse(explode(".", $_SERVER['HTTP_HOST'])), 0, 2))));
+}
+
+if (defined('IDER_SERVER')) {
+    \IDERConnect\IDEROpenIDClient::$IDERServer = IDER_SERVER;
+}
+
+/**
+ * Implements hook_init().
+ */
+function ider_login_init() {
+
+}
+
+/**
+ * Implement hook_help().
+ */
+function ider_login_help($path, $arg) {
+    if($path == 'admin/help#ider_login'){
+        $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'gauth');
+        $output = '<h3>' . t('About') . '</h3>';
+        $output .= '<p>' . t("This module allows users to login through the IDer services.") . '</p>';
+        $output .= '<h3>' . t('Setup') . '</h3>';
+        $output .= '<p>' . t("To setup this module you must fill in the Client ID, the Client Secret and the scope name given by the IDer partner area.") . '</p>';
+
+        return $output;
+    }
+}
+
 /**
  * Implements hook_menu().
  */
 function ider_login_menu() {
-    $items['admin/config/people/ider_login'] = array(
-        'title' => 'Welcome message configure',
+
+    $items = array();
+
+    $items['admin/config/services/ider_login'] = array(
+        'title' => 'IDer Login',
+        'description' => 'Configure the IDer service to work properly with your site.',
         'page callback' => 'drupal_get_form',
         'page arguments' => array('ider_login_form'),
-        'access arguments' => array('administer users'),
+        'access arguments' => array('access administration pages'),
         'type' => MENU_NORMAL_ITEM,
     );
+
     return $items;
 }
 
 /**
- * Admin form to configurable welcome message
+ * Admin form to configure IDer service
  */
 function ider_login_form($form, &$form_state) {
+
+    $pluginPath = drupal_get_path('module', 'ider_login');
+
+    $form = array();
+
+    $form['ider_login_config_description'] = array(
+        '#markup' => variable_get('contact_form_information', t('You can leave us a message using the contact form below.')),
+    );
+
+    $form['#attached']['js'] = array(
+        drupal_get_path('module', 'ider_login') . '/assets/js/admin.js',
+    );
+
+    $form['ider_login_client_id'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Client ID'),
+        '#required' => TRUE,
+    );
+
+    $form['ider_login_client_secret'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Client Secret'),
+        '#required' => TRUE,
+    );
+
+    $form['ider_login_scope_name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Scope Name'),
+        '#required' => TRUE,
+    );
+
+    $form['copy'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Add IDer button in the default Drupal login.'),
+    );
+
     $form['ider_login_message'] = array(
         '#type' => 'textarea',
-        '#title' => t('Welcome message'),
+        '#title' => t('IDer Single Sign On Configuration'),
         '#rows' => 5,
         '#required' => TRUE,
     );
+
     return system_settings_form($form);
 }

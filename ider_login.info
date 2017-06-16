@@ -3,4 +3,4 @@ description = This plugin provides functionality to register and connect to your
 core = 7.x
 php = 5.4
 files[] = ider_login.module
-configure = admin/config/people/ider-login
+configure = admin/config/services/ider_login
