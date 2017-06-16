@@ -1,0 +1,20 @@
+.ider-login-button {
+    background-color: #3498db!important;
+    text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799!important;
+    border-color: #0073aa #006799 #006799!important;
+    box-shadow: 0 1px 0 #006799!important;
+    background-image: url(../images/ider_logo_white_256.png);
+    background-size: 50px;
+    background-repeat: no-repeat;
+    height: 50px;
+    width: 200px;
+    text-align: right;
+    border-radius: 7px!important;
+}
+
+.ider-login-button:hover {
+    background-image: url('../images/ider_logo_white_256.png');
+    background-color: #008ec2!important;
+    border-color: #006799!important;
+    color: #fff!important;
+}

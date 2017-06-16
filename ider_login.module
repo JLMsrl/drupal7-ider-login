@@ -186,15 +186,17 @@ function ider_login_form_alter(&$form, $form_state, $form_id) {
     if ($form_id == 'user_login' || $form_id == 'user_login_block') {
         $form['submit_ider'] = array(
             '#type' => 'submit',
-            '#value' => t(''),
+            '#value' => t('Login with IDer'),
+            '#attributes'=>array('class' => array('ider-login-button')),
             '#submit' => array('ider_login_auth_submit'),
             '#limit_validation_errors' => array(),
             '#weight' => 1000,
         );
-        drupal_add_css(drupal_get_path('module', 'gauth_login') . '/ider_login.css');
+        drupal_add_css(drupal_get_path('module', 'ider_login') . '/assets/css/ider_login.css');
     }
 }
 
 function ider_login_auth_submit() {
+    // TODO login auth with php
     return 'ciao';
 }
