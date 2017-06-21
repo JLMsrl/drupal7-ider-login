@@ -71,7 +71,7 @@ billing_email=email
         \IDERConnect\IDEROpenIDClient::$IDERLogFile = drupal_get_path('module', 'ider_login') . '/log/ider-connect.log';
 
         if (is_null(\IDERConnect\IDEROpenIDClient::$_instance)) {
-            \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient("636334882893577718", "72d35c9b-f05f-48dc-8794-9eda687ccc52", "89bac1e2-4611-4094-9e62-91c0ad7fe180");
+            \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient(variable_get('ider_login_client_id'), variable_get('ider_login_client_secret'), variable_get('ider_login_scope_name'));
         }
 
         return \IDERConnect\IDEROpenIDClient::$_instance;
@@ -105,7 +105,7 @@ billing_email=email
         } catch (Exception $e) {
             //die("Session ID: " . session_id() . "<br />");
 
-            die(var_dump($_SESSION));
+            die(var_dump($e->getMessage()));
             //IDER_Callback::access_denied($e->getMessage());
         } finally {
             exit;

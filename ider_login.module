@@ -103,7 +103,7 @@ function ider_login_form($form, &$form_state) {
     $pluginConfigDescription .= '<p>This plugin is meant to be used with <a target="_blank" href="https://www.ider.com/">IDer Connect System</a></p>';
     $pluginConfigDescription .= '<h5>Setting up IDer Client Account</h5>';
     $pluginConfigDescription .= '<ol>';
-    $pluginConfigDescription .= '<li>Create a new client and set the Redirect URI (aka callback URL) to: <strong>' .  url(\IDERConnect\IDEROpenIDClient::$IDEButtonURL)  . '</strong></li>';
+    $pluginConfigDescription .= '<li>Create a new client and set the Redirect URI (aka callback URL) to: <strong>' . rtrim($base_url, '/') . '/idercallback</strong></li>';
     $pluginConfigDescription .= '<li>Copy the Client ID and Client Secret in the text fields below.</li>';
     $pluginConfigDescription .= '<li>Set the campaign id to retrieve the user data you chose.</li>';
     $pluginConfigDescription .= '<li>If you open a custom campaign and want your customer to land on a specific page, please configure it in the advanced setting "Campaigns Landing pages" using the format <strong>&lt;Campaign id&gt;=&lt;Landing Page&gt;</strong></li>';
