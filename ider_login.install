@@ -9,12 +9,40 @@
  * Implements hook_install().
  */
 function ider_login_install() {
+    // provides $_SESSION use by anonymous users
+    db_query("INSERT IGNORE INTO users (uid) VALUES (0);");
 
+    // add the ider_sub field into the database
+    $field = array(
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => FALSE,
+      'description' => 'IDer sub to recognize the IDer account.',
+    );
+    $index = array(
+      'indexes' => array(
+        'ider_sub' => array('ider_sub')
+      ),
+    );
+    db_add_field('users', 'ider_sub', $field, $index);
 }
 
 /**
  * Implements hook_uninstall().
  */
 function ider_login_uninstall() {
+    // remove the ider_sub field from the database
+    db_drop_field('users', 'ider_sub');
+}
 
+/**
+ * Implements hook_schema_alter().
+ */
+function ider_login_schema_alter(&$schema) {
+  $schema['users']['fields']['ider_sub'] = array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => FALSE,
+    'description' => 'IDer sub to recognize the IDer account.',
+  );
 }
