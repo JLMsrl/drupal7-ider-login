@@ -9,7 +9,6 @@ class IDER_Callback
 
     static function handler($user_info)
     {
-
         $user_info = IDER_UserInfoManager::normalize($user_info);
         // TODO callback function
         IDER_Callback::defaultHandler($user_info);
@@ -29,7 +28,8 @@ class IDER_Callback
 
         // check if user exists by sub
         if (!$user) {
-            $user = user_load(
+            $user = user_load_multiple(
+                array(),
                 array(
                     'ider_sub' => $user_info->sub
                 )
@@ -45,10 +45,10 @@ class IDER_Callback
         }
 
         // Log the User In
-        self::_login($user);
+        self::_login($user->uid);
 
         // update user data
-        self::_update_ider_sub($user->uid, $user_info->sub);
+        self::_update_ider_sub((int)$user->uid, $user_info->sub);
 
         if (user_is_logged_in()) {
             // pass the controll to user defined functions and landing pages
@@ -99,8 +99,8 @@ class IDER_Callback
 
         $new_user = array(
             'ider_sub' => $user_info->sub,
-            'name' => $user_info->given_name . ' ' . $user_info->family_name,
-            'mail' => $user_info->email,
+            'name' => $user_info->mail,
+            'mail' => $user_info->mail,
             'pass' => $random_password,
             'status' => 1,
             'access' => REQUEST_TIME,
@@ -109,7 +109,7 @@ class IDER_Callback
 
         $user = user_save(NULL, $new_user);
 
-        drupal_session_destroy_uid($user->uid);
+        drupal_session_destroy_uid((int)$user->uid);
 
         return $user;
     }
@@ -119,9 +119,9 @@ class IDER_Callback
     {
 
         // User ID 1 is not allowed
-        if ('1' === $user_to_login->uid) {
+        if ('1' === (int)$user_to_login) {
 
-            drupal_session_destroy_uid($user_to_login->uid);
+            drupal_session_destroy_uid((int)$user_to_login);
             self::access_denied("For security reasons, admin cannot login via IDer.");
             return false;
 
@@ -129,7 +129,7 @@ class IDER_Callback
 
             if (!user_is_logged_in()) {
 
-                $formState = array('uid' => $user_to_login->uid);
+                $formState = array('uid' => (int)$user_to_login);
                 user_login_submit(array(), $formState);
 
             }
