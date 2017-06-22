@@ -22,42 +22,45 @@ class IDER_Callback
     {
 
         // check if user exists by email
-        // ps: if user uses same email on a new IDer profile the sub will be updated on the old profie
+        // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
         //$user = get_user_by('email', $user_info->email);
 
         $user = user_load_by_mail($user_info->email);
 
 
         // check if user exists by sub
-        if (!$user->ID) {
-            $user = get_users(['meta_key' => 'ider_sub', 'meta_value' => $user_info->sub]);
-
+        if (!$user) {
+            $user = user_load(
+                array(
+                    'ider_sub' => $user_info->sub
+                )
+            );
             // TODO: leverage future endpoint to check which side changed the email: local->no access and error msg, remote->update email
         }
 
         // if new, register first
-        if (!$user->ID) {
+        if (!$user) {
+
             $user_id = self::_do_register($user_info);
 
-            $user = get_user_by('id', $user_id);
+            $user = user_load(
+                array(
+                    'uid' => $user_id
+                )
+            );
         }
 
         // Log the User In
         self::_login($user);
-        do_action('wp_login', $user_info->email);
 
         // update user data
-        self::_update_usermeta($user->ID, $user_info);
+        self::_update_ider_sub($user->uid, $user_info->sub);
 
-        if (is_user_logged_in()) {
+        if (user_is_logged_in()) {
             // pass the controll to user defined functions and landing pages
-            apply_filters('after_callback_handler', $user_info, $_SESSION['openid_connect_scope']);
+            //apply_filters('after_callback_handler', $user_info, $_SESSION['openid_connect_scope']);
 
-            if (true == IDER_Server::get_option('redirect_to_page')) {
-                wp_redirect(IDER_Server::get_option('welcome_page'));
-            } else {
-                wp_redirect(home_url());
-            }
+            drupal_goto(url(variable_get('ider_login_welcome_page')));
             exit;
         }
 
@@ -94,24 +97,11 @@ class IDER_Callback
     }
 
 
-    private static function _update_usermeta($user_id, $userdata)
+    private static function _update_ider_sub($user_id, $userSub)
     {
-        $updated = [];
-
-        foreach ($userdata as $key => $data) {
-            // TMP: override wrong format
-            // if (in_array($key, array('billing_country', 'shipping_country'))) $data = 'IT';
-
-            $metadata = get_user_meta($user_id, $key, true);
-
-            if ($metadata != $data) {
-                update_user_meta($user_id, $key, $data);
-
-                // mask as updated
-                $updated[] = $key;
-            }
-        }
-        update_user_meta($user_id, 'last_updated_fields', $updated);
+        $account = user_load($user_id);
+        $edit = array('ider_sub' => $userSub);
+        user_save($account, $edit);
 
         // TMP: filling missing fields
         /*
@@ -121,7 +111,6 @@ class IDER_Callback
         update_user_meta($user_id, 'billing_state', 'TO');
         */
 
-        return $updated;
     }
 
 
@@ -129,31 +118,42 @@ class IDER_Callback
     {
 
         // Does not have an account. Register and then log the user in
-        $random_password = wp_generate_password($length = 12, $include_standard_special_chars = false);
-        $user_id = wp_create_user($user_info->email, $random_password, $user_info->email);
-        wp_clear_auth_cookie();
-        wp_set_current_user($user_id);
-        wp_set_auth_cookie($user_id);
+        $random_password =  user_password(12);
 
-        update_user_meta($user_id, 'ider_sub', $user_info->sub);
+        $new_user = array(
+            'ider_sub' => $user_info->sub,
+            'name' => $user_info->first_name . ' ' . $user_info->family_name,
+            'mail' => $user_info->email,
+            'pass' => $random_password,
+            'status' => 1,
+            'access' => REQUEST_TIME,
+            'roles' => array(), // No other roles than Authenticated
+        );
 
-        return $user_id;
+        $user = user_save(NULL, $new_user);
+        $userId = $user->uid;
+        user_logout();
+
+        return $userId;
     }
 
 
-    private static function _login($user)
+    private static function _login($userToLogIn)
     {
 
         // User ID 1 is not allowed
-        if ('1' === $user->ID) {
-            wp_die('For security reasons, admin cannot login via IDer.');
+        if ('1' === $userToLogIn->uid) {
+            drupal_exit('For security reasons, admin cannot login via IDer.');
         }
 
-        if (!is_user_logged_in()) {
+        if (!user_is_logged_in()) {
+            user_cookie_delete('name');
+            user_cookie_delete('mail');
+            user_cookie_delete('homepage');
 
-            wp_clear_auth_cookie();
-            wp_set_current_user($user->ID, $user->user_login);
-            wp_set_auth_cookie($user->ID);
+            $formState = array('uid' => $userToLogIn->uid);
+            user_login_submit(array(), $formState);
+
         }
 
     }

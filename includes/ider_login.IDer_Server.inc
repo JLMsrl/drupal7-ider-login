@@ -81,22 +81,24 @@ billing_email=email
     public static function IDerOpenIdClientHandler()
     {
 
-        $queryV = drupal_get_query_parameters();
+        $queryVars = drupal_get_query_parameters();
 
 
         try {
 
             $iderconnect = IDER_Server::getIDerOpenIdClientIstance();
 
-            if (!empty($queryV['scope'])) {
-                $iderconnect->setScope($queryV['scope']);
+            if (!empty($queryVars['scope'])) {
+                $iderconnect->setScope($queryVars['scope']);
             }
 
             $iderconnect->authenticate();
 
-            die(var_dump($iderconnect->requestUserInfo()));
+            $userInfo = $iderconnect->requestUserInfo();
 
-            drupal_set_message(t("Hello $userInfo, the login logics are still missing :3"), 'error');
+            //die(var_dump($iderconnect->requestUserInfo()));
+
+            //drupal_set_message(t("Hello $userInfo, the login logics are still missing :3"), 'error');
 
             IDER_Callback::handler($userInfo);
 
@@ -135,6 +137,13 @@ billing_email=email
         //  This should be used only when composer autoload fails to include classes
         //  self::loadPackage(IDER_PLUGIN_DIR.'vendor/phpseclib/phpseclib');
         //  self::loadPackage(IDER_PLUGIN_DIR.'vendor/jlmsrl/ider-openid-client-php');
+
+        require_once 'ider_login.IDer_Callback.inc';
+        require_once 'ider_login.IDER_Helpers.inc';
+        require_once 'ider_login.IDer_UserInfoManager.inc';
+
+        // user module functions
+        module_load_include('pages.inc', 'user');
 
     }
 

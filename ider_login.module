@@ -226,3 +226,24 @@ function ider_login_form_alter(&$form, $form_state, $form_id) {
 function ider_login_auth(){
     IDER_Server::IDerOpenIdClientHandler();
 }
+
+/**
+ * Add custom hooks
+ */
+/**
+ * Implements hook_example_thingy().
+ */
+
+/* If you need customization (ie: field map) you can write below */
+function ider_login_fields_map($fields) {
+
+    $fields_mapping = variable_get('ider_login_field_mapping');
+
+    preg_match_all('/^(?!#)(\w+)=([\w\.]+)/m', $fields_mapping, $matches);
+
+    $fields = array_combine($matches[1], $matches[2]);
+
+    return $fields;
+
+}
+
