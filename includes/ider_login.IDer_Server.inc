@@ -98,8 +98,6 @@ billing_email=email
 
             //die(var_dump($iderconnect->requestUserInfo()));
 
-            //drupal_set_message(t("Hello $userInfo, the login logics are still missing :3"), 'error');
-
             IDER_Callback::handler($userInfo);
 
             exit;
@@ -107,8 +105,7 @@ billing_email=email
         } catch (Exception $e) {
             //die("Session ID: " . session_id() . "<br />");
 
-            die(var_dump($e->getMessage()));
-            //IDER_Callback::access_denied($e->getMessage());
+            IDER_Callback::access_denied($e->getMessage());
         } finally {
             exit;
         }

@@ -20,7 +20,6 @@ class IDER_Callback
     // register or authenticate user
     static function defaultHandler($user_info)
     {
-
         // check if user exists by email
         // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
         //$user = get_user_by('email', $user_info->email);
@@ -41,13 +40,8 @@ class IDER_Callback
         // if new, register first
         if (!$user) {
 
-            $user_id = self::_do_register($user_info);
+            $user = self::_do_register($user_info);
 
-            $user = user_load(
-                array(
-                    'uid' => $user_id
-                )
-            );
         }
 
         // Log the User In
@@ -61,38 +55,21 @@ class IDER_Callback
             //apply_filters('after_callback_handler', $user_info, $_SESSION['openid_connect_scope']);
 
             drupal_goto(url(variable_get('ider_login_welcome_page')));
-            exit;
+
         }
 
         IDER_Callback::access_denied("User unable to login.");
     }
 
 
-    static function access_denied($errormsg, $mainmsg = null)
+    static function access_denied($errormsg)
     {
-        if (is_null($mainmsg)) {
-            $mainmsg = "Error authenticating user";
+        if (is_null($errormsg)) {
+            $errormsg = "Error authenticating user";
         }
 
-        wp_enqueue_style('ider-css', IDER_PLUGIN_URL . 'assets/css/general.css', false, IDER_CLIENT_VERSION, 'all');
-
-        $error_msg = sanitize_text_field($errormsg);
-        get_header();
-        echo '<div class="container">';
-        echo '<div class="row">';
-        echo '<div class="col-md-12 col-sm-18">';
-        echo '<header class="page-header">';
-        echo '<h1 class="page-title">' . $mainmsg . '</h1>';
-        echo '</header>';
-        echo '<div class="errordiv">';
-        echo '<p>Please try later.</p>';
-        echo '<small>' . ucwords(str_replace('_', ' ', $error_msg)) . ' </small>';
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-        get_footer();
-        die();
+        drupal_set_message(t($errormsg), 'error');
+        drupal_goto(url('/'));
 
     }
 
@@ -122,7 +99,7 @@ class IDER_Callback
 
         $new_user = array(
             'ider_sub' => $user_info->sub,
-            'name' => $user_info->first_name . ' ' . $user_info->family_name,
+            'name' => $user_info->given_name . ' ' . $user_info->family_name,
             'mail' => $user_info->email,
             'pass' => $random_password,
             'status' => 1,
@@ -131,28 +108,33 @@ class IDER_Callback
         );
 
         $user = user_save(NULL, $new_user);
-        $userId = $user->uid;
-        user_logout();
 
-        return $userId;
+        drupal_session_destroy_uid($user->uid);
+
+        return $user;
     }
 
 
-    private static function _login($userToLogIn)
+    private static function _login($user_to_login)
     {
 
         // User ID 1 is not allowed
-        if ('1' === $userToLogIn->uid) {
-            drupal_exit('For security reasons, admin cannot login via IDer.');
-        }
+        if ('1' === $user_to_login->uid) {
 
-        if (!user_is_logged_in()) {
-            user_cookie_delete('name');
-            user_cookie_delete('mail');
-            user_cookie_delete('homepage');
+            drupal_session_destroy_uid($user_to_login->uid);
+            self::access_denied("For security reasons, admin cannot login via IDer.");
+            return false;
 
-            $formState = array('uid' => $userToLogIn->uid);
-            user_login_submit(array(), $formState);
+        } else {
+
+            if (!user_is_logged_in()) {
+
+                $formState = array('uid' => $user_to_login->uid);
+                user_login_submit(array(), $formState);
+
+            }
+
+            return true;
 
         }
 
