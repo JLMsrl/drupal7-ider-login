@@ -4,6 +4,7 @@
  * Install and uninstall functions for the IDer Login module.
  */
 
+require_once 'includes/ider_login.IDer_UserInfoManager.inc';
 
 /**
  * Implements hook_install().
@@ -25,6 +26,11 @@ function ider_login_install() {
       ),
     );
     db_add_field('users', 'ider_sub', $field, $index);
+
+    // add custom fields default
+    variable_set('ider_login_enable_in_login', IDer_Server::$default_settings['enable_in_login']);
+    variable_set('ider_login_fields_mapping', IDer_Server::$default_settings['fields_mapping']);
+
 }
 
 /**
