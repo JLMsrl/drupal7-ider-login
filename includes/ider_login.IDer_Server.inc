@@ -80,31 +80,20 @@ signature=note
 
     public static function IDerOpenIdClientHandler()
     {
-
         $queryVars = drupal_get_query_parameters();
-
-
         try {
 
             $iderconnect = IDER_Server::getIDerOpenIdClientIstance();
-
             if (!empty($queryVars['scope'])) {
+                $ciao = $queryVars['scope'];
                 $iderconnect->setScope($queryVars['scope']);
             }
-
             $iderconnect->authenticate();
-
             $userInfo = $iderconnect->requestUserInfo();
-
-            //die(var_dump($iderconnect->requestUserInfo()));
-
             IDER_Callback::handler($userInfo);
-
             exit;
 
         } catch (Exception $e) {
-            //die("Session ID: " . session_id() . "<br />");
-
             IDER_Callback::access_denied($e->getMessage());
         } finally {
             exit;

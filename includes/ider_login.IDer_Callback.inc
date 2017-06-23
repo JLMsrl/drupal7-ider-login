@@ -7,23 +7,28 @@
 class IDER_Callback
 {
 
-    static function handler($user_info)
+    static function handler($userInfo)
     {
-        $user_info = IDER_UserInfoManager::normalize($user_info);
+        $userInfo = IDER_UserInfoManager::normalize($userInfo);
         // TODO callback function
-        IDER_Callback::defaultHandler($user_info);
+        $handled = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+
+        // if user function hadn't been exclusive let's resume the standard flow
+        if (!$handled) {
+            IDER_Callback::defaultHandler($userInfo);
+        }
 
     }
 
 
     // register or authenticate user
-    static function defaultHandler($user_info)
+    static function defaultHandler($userInfo)
     {
         // check if user exists by email
         // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
         //$user = get_user_by('email', $user_info->email);
 
-        $user = user_load_by_mail($user_info->email);
+        $user = user_load_by_mail($userInfo->email);
 
 
         // check if user exists by sub
@@ -31,7 +36,7 @@ class IDER_Callback
             $user = user_load_multiple(
                 array(),
                 array(
-                    'ider_sub' => $user_info->sub
+                    'ider_sub' => $userInfo->sub
                 )
             );
             // TODO: leverage future endpoint to check which side changed the email: local->no access and error msg, remote->update email
@@ -40,7 +45,7 @@ class IDER_Callback
         // if new, register first
         if (!$user) {
 
-            $user = self::_do_register($user_info);
+            $user = self::_do_register($userInfo);
 
         }
 
@@ -48,20 +53,25 @@ class IDER_Callback
         self::_login($user->uid);
 
         // update user data
-        self::_update_ider_sub((int)$user->uid, $user_info->sub);
+        self::_update_ider_sub((int)$user->uid, $userInfo->sub);
 
         if (user_is_logged_in()) {
+
             // pass the controll to user defined functions and landing pages
-            //apply_filters('after_callback_handler', $user_info, $_SESSION['openid_connect_scope']);
+            module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
 
             drupal_goto(url(variable_get('ider_login_welcome_page')));
+
+            exit;
 
         }
 
         IDER_Callback::access_denied("User unable to login.");
     }
 
-
+    /**
+     * Show error message if the user doesn't have access.
+     */
     static function access_denied($errormsg)
     {
         if (is_null($errormsg)) {
@@ -69,15 +79,24 @@ class IDER_Callback
         }
 
         drupal_set_message(t($errormsg), 'error');
-        drupal_goto(url('/'));
+
+        drupal_goto();
 
     }
 
-
-    private static function _update_ider_sub($user_id, $userSub)
+    /**
+     * Update IDer database sub
+     */
+    private static function _update_ider_sub($userId, $userSub)
     {
-        $account = user_load($user_id);
+
+        // load the user by its ID
+        $account = user_load($userId);
+
+        // build the key value edit array
         $edit = array('ider_sub' => $userSub);
+
+        // save the user to the database edited
         user_save($account, $edit);
 
         // TMP: filling missing fields
@@ -90,46 +109,58 @@ class IDER_Callback
 
     }
 
-
-    private static function _do_register($user_info)
+    /**
+     * Register an user
+     */
+    private static function _do_register($userInfo)
     {
 
         // Does not have an account. Register and then log the user in
         $random_password =  user_password(12);
 
-        $new_user = array(
-            'ider_sub' => $user_info->sub,
-            'name' => $user_info->mail,
-            'mail' => $user_info->mail,
+        // build the new user Array()
+        $newUser = array(
+            'ider_sub' => $userInfo->sub,
+            'name' => $userInfo->mail,
+            'mail' => $userInfo->mail,
             'pass' => $random_password,
             'status' => 1,
             'access' => REQUEST_TIME,
             'roles' => array(), // No other roles than Authenticated
         );
 
-        $user = user_save(NULL, $new_user);
+        // save the new user
+        $user = user_save(NULL, $newUser);
 
-        drupal_session_destroy_uid((int)$user->uid);
+        // destroy eventual login sessions
+        module_invoke_all('user_logout', $user);
 
         return $user;
+
     }
 
-
-    private static function _login($user_to_login)
+    /**
+     * Login an user by its ID
+     */
+    private static function _login($userID)
     {
 
         // User ID 1 is not allowed
-        if ('1' === (int)$user_to_login) {
+        if ('1' === $userID) {
 
-            drupal_session_destroy_uid((int)$user_to_login);
+            // set the error message
             self::access_denied("For security reasons, admin cannot login via IDer.");
-            return false;
+            // logout an user redirecting it
+            user_logout();
 
         } else {
 
+            // check if user is not logged in
             if (!user_is_logged_in()) {
 
-                $formState = array('uid' => (int)$user_to_login);
+                // make the key value pairs array with the info of the user to log in
+                $formState = array('uid' => (int)$userID);
+                // submit the data
                 user_login_submit(array(), $formState);
 
             }
