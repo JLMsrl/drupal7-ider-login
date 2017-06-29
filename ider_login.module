@@ -249,7 +249,6 @@ function ider_login_fields_map($fields) {
 
 /* If you need custom data handler you can hook here. */
 function ider_login_before_callback_handler($userInfo, $scopes) {
-
     $handled = false;
     if (in_array('yourscope', $scopes)) {
         // do something...
@@ -278,11 +277,10 @@ function ider_login_after_callback_handler($userInfo, $scopes) {
         if (in_array($scope, $scopes)) {
 
             drupal_add_http_header('Location', $landingPage);
-
             exit;
+
         }
     }
 
-    return true;
 
 }

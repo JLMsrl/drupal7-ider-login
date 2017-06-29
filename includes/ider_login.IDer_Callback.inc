@@ -13,7 +13,7 @@ class IDER_Callback
         $userInfo = IDER_UserInfoManager::normalize($userInfo);
 
         // TODO callback function
-        $handled = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+        $handled = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope'])[0];
 
         // if user function hadn't been exclusive let's resume the standard flow
         if (!$handled) {
@@ -60,7 +60,8 @@ class IDER_Callback
 
         if (user_is_logged_in()) {
             // pass the controll to user defined functions and landing pages
-            //module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+
+            module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
 
             drupal_goto(url(variable_get('ider_login_welcome_page')));
 
