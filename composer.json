@@ -9,8 +9,11 @@
     "openid"
   ],
   "type": "project",
-  "minimum-stability": "dev",
   "require": {
-    "jlmsrl/ider-openid-client-php": "dev-master"
+    "jlmsrl/ider-openid-client-php": "~1.0"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "secure-http": false
   }
 }
