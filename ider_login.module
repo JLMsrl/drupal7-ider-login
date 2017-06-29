@@ -286,4 +286,3 @@ function ider_login_after_callback_handler($userInfo, $scopes) {
     return true;
 
 }
-

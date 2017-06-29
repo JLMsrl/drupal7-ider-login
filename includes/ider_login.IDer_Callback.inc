@@ -9,13 +9,15 @@ class IDER_Callback
 
     static function handler($userInfo)
     {
+
         $userInfo = IDER_UserInfoManager::normalize($userInfo);
+
         // TODO callback function
         $handled = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
 
         // if user function hadn't been exclusive let's resume the standard flow
         if (!$handled) {
-            IDER_Callback::defaultHandler($userInfo);
+            self::defaultHandler($userInfo);
         }
 
     }
@@ -26,13 +28,13 @@ class IDER_Callback
     {
         // check if user exists by email
         // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
-        //$user = get_user_by('email', $user_info->email);
 
         $user = user_load_by_mail($userInfo->email);
 
 
         // check if user exists by sub
         if (!$user) {
+
             $user = user_load_multiple(
                 array(),
                 array(
@@ -40,6 +42,7 @@ class IDER_Callback
                 )
             );
             // TODO: leverage future endpoint to check which side changed the email: local->no access and error msg, remote->update email
+
         }
 
         // if new, register first
@@ -56,9 +59,8 @@ class IDER_Callback
         self::_update_ider_sub((int)$user->uid, $userInfo->sub);
 
         if (user_is_logged_in()) {
-
             // pass the controll to user defined functions and landing pages
-            module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+            //module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
 
             drupal_goto(url(variable_get('ider_login_welcome_page')));
 
@@ -66,7 +68,7 @@ class IDER_Callback
 
         }
 
-        IDER_Callback::access_denied("User unable to login.");
+        self::access_denied("User unable to login.");
     }
 
     /**
@@ -100,12 +102,6 @@ class IDER_Callback
         user_save($account, $edit);
 
         // TMP: filling missing fields
-        /*
-        update_user_meta($user_id, 'billing_address_1', 'Via Roma 10');
-        update_user_meta($user_id, 'billing_postcode', '10100');
-        update_user_meta($user_id, 'billing_city', 'Torino');
-        update_user_meta($user_id, 'billing_state', 'TO');
-        */
 
     }
 
