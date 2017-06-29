@@ -4,11 +4,12 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6306066dcdbde5c690ddc9810b4fb76",
+    "hash": "9a139b8c66abae663e94c0579e8dfffc",
+    "content-hash": "5c474abddc6306b8ac8fa533b744a192",
     "packages": [
         {
             "name": "jlmsrl/ider-openid-client-php",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
@@ -130,15 +131,13 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2016-01-18T17:07:21+00:00"
+            "time": "2016-01-18 17:07:21"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {
-        "jlmsrl/ider-openid-client-php": 20
-    },
+    "minimum-stability": "stable",
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

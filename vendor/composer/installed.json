@@ -29,7 +29,7 @@
             "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
             "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
         },
-        "time": "2016-01-18T17:07:21+00:00",
+        "time": "2016-01-18 17:07:21",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -92,8 +92,8 @@
     },
     {
         "name": "jlmsrl/ider-openid-client-php",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/JLMsrl/ider-openid-client-php.git",
@@ -111,9 +111,9 @@
             "php": ">=5.3",
             "phpseclib/phpseclib": "2.0.1"
         },
-        "time": "2017-06-22T10:35:20+00:00",
+        "time": "2017-06-22 10:35:20",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "IDERConnect\\": "src/"
