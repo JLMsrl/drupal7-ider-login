@@ -6,7 +6,7 @@
 
 // require libs
 require_once 'vendor/autoload.php';
-require_once 'includes/ider_login.IDer_Server.inc';
+module_load_include('inc', 'ider_login', 'includes/server');
 
 define('IDER_SERVER', 'https://qaoid.ider.com/core');
 
@@ -99,20 +99,20 @@ function ider_login_form($form, &$form_state) {
 
     $form = array();
 
-    $pluginConfigDescription = '<h1>IDer Single Sign On Configuration</h1>';
-    $pluginConfigDescription .= '<p>This plugin is meant to be used with <a target="_blank" href="https://www.ider.com/">IDer Connect System</a></p>';
-    $pluginConfigDescription .= '<h5>Setting up IDer Client Account</h5>';
-    $pluginConfigDescription .= '<ol>';
-    $pluginConfigDescription .= '<li>Create a new client and set the Redirect URI (aka callback URL) to: <strong>' . rtrim($base_url, '/') . '/idercallback</strong></li>';
-    $pluginConfigDescription .= '<li>Copy the Client ID and Client Secret in the text fields below.</li>';
-    $pluginConfigDescription .= '<li>Set the campaign id to retrieve the user data you chose.</li>';
-    $pluginConfigDescription .= '<li>If you open a custom campaign and want your customer to land on a specific page, please configure it in the advanced setting "Campaigns Landing pages" using the format <strong>&lt;Campaign id&gt;=&lt;Landing Page&gt;</strong></li>';
-    $pluginConfigDescription .= '<li>You can place the IDer button everywhere using widget, the classic form or the shortcode [ider_login_button]</li>';
-    $pluginConfigDescription .= '</ol>';
-    $pluginConfigDescription .= '<hr class="description-separator">';
+    $description = '<h1>IDer Single Sign On Configuration</h1>';
+    $description .= '<p>This plugin is meant to be used with <a target="_blank" href="https://www.ider.com/">IDer Connect System</a></p>';
+    $description .= '<h5>Setting up IDer Client Account</h5>';
+    $description .= '<ol>';
+    $description .= '<li>Create a new client and set the Redirect URI (aka callback URL) to: <strong>' . rtrim($base_url, '/') . '/idercallback</strong></li>';
+    $description .= '<li>Copy the Client ID and Client Secret in the text fields below.</li>';
+    $description .= '<li>Set the campaign id to retrieve the user data you chose.</li>';
+    $description .= '<li>If you open a custom campaign and want your customer to land on a specific page, please configure it in the advanced setting "Campaigns Landing pages" using the format <strong>&lt;Campaign id&gt;=&lt;Landing Page&gt;</strong></li>';
+    $description .= '<li>You can place the IDer button everywhere using widget, the classic form or the shortcode [ider_login_button]</li>';
+    $description .= '</ol>';
+    $description .= '<hr class="description-separator">';
 
     $form['ider_login_config_description'] = array(
-        '#markup' => $pluginConfigDescription,
+        '#markup' => $description,
     );
 
 /*
@@ -140,10 +140,10 @@ function ider_login_form($form, &$form_state) {
         '#required' => TRUE,
     );
 
-    $form['ider_login_scope_name'] = array(
+    $form['ider_login_extra_scopes'] = array(
         '#type' => 'textfield',
         '#title' => t('Scope Name'),
-        '#default_value' => variable_get('ider_login_scope_name'),
+        '#default_value' => variable_get('ider_login_extra_scopes'),
         '#required' => TRUE,
     );
 
