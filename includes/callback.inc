@@ -59,8 +59,11 @@ class IDER_Callback
         self::_update_ider_sub((int)$user->uid, $userInfo->sub);
 
         if (user_is_logged_in()) {
-            // pass the controll to user defined functions and landing pages
 
+            // update the user info into IDer table
+            self::_update_ider_table($userInfo);
+
+            // pass the controll to user defined functions and landing pages
             module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
 
             drupal_goto(url(variable_get('ider_login_welcome_page')));
@@ -103,6 +106,20 @@ class IDER_Callback
         user_save($account, $edit);
 
         // TMP: filling missing fields
+
+    }
+
+    /**
+     * Add a record foreach field inside IDer table
+     */
+    private static function _update_ider_table($userInfo)
+    {
+
+        foreach ($userInfo as $key => $value) {
+
+            // TODO: update the new IDer table
+
+        }
 
     }
 
