@@ -4,32 +4,37 @@
  * Install and uninstall functions for the IDer Login module.
  */
 
-require_once 'includes/ider_login.IDer_UserInfoManager.inc';
+module_load_include('inc', 'ider_login', 'includes/IDer_Server');
 
 /**
  * Implements hook_install().
  */
 function ider_login_install() {
+
     // provides $_SESSION use by anonymous users
     db_query("INSERT IGNORE INTO users (uid) VALUES (0);");
 
     // add the ider_sub field into the database
-    $field = array(
-      'type' => 'varchar',
-      'length' => 255,
-      'not null' => FALSE,
-      'description' => 'IDer sub to recognize the IDer account.',
+    db_add_field('users', 'ider_sub', array(
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => FALSE,
+            'description' => 'IDer sub to recognize the IDer account.',
+        ),
+        array(
+            'indexes' => array(
+                'ider_sub' => array('ider_sub')
+            ),
+        )
     );
-    $index = array(
-      'indexes' => array(
-        'ider_sub' => array('ider_sub')
-      ),
-    );
-    db_add_field('users', 'ider_sub', $field, $index);
+
+    // add custom ider table
+    drupal_install_schema('ider_user_data');
 
     // add custom fields default
-    variable_set('ider_login_enable_in_login', IDer_Server::$default_settings['enable_in_login']);
-    variable_set('ider_login_fields_mapping', IDer_Server::$default_settings['fields_mapping']);
+    foreach (IDer_Server::$default_settings as $key => $value){
+        variable_set('ider_login_' . $key, $value);
+    }
 
 }
 
@@ -37,18 +42,64 @@ function ider_login_install() {
  * Implements hook_uninstall().
  */
 function ider_login_uninstall() {
+
     // remove the ider_sub field from the database
     db_drop_field('users', 'ider_sub');
+
+    // drop the ider table
+    db_drop_table('ider_user_data');
+
+    // remove custom fields
+    foreach (IDer_Server::$default_settings as $key => $value){
+        variable_del('ider_login_' . $key);
+    }
+
 }
 
 /**
  * Implements hook_schema_alter().
  */
 function ider_login_schema_alter(&$schema) {
-  $schema['users']['fields']['ider_sub'] = array(
-    'type' => 'varchar',
-    'length' => 255,
-    'not null' => FALSE,
-    'description' => 'IDer sub to recognize the IDer account.',
-  );
+
+    // add user ider_sub
+    $schema['users']['fields']['ider_sub'] = array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'IDer sub to recognize the IDer account.',
+    );
+
 }
+
+/**
+ * Implements hook_schema().
+ */
+function ider_login_schema(){
+
+    $schema['ider_user_data'] = array(
+        'description' => 'IDer user data.',
+        'fields' => array(
+            'uid' => array(
+                'description' => 'The user related UID.',
+                'type' => 'int',
+                'length' => 255,
+                'not null' => TRUE,
+            ),
+            'user_field' => array(
+                'description' => 'The user field for an horizontal querying.',
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+            ),
+            'user_value' => array(
+                'description' => 'The value of the field.',
+                'type' => 'varchar',
+                'length' => 255,
+                'default' => '',
+            ),
+        ),
+        'primary key' => array('uid')
+    );
+
+}
+
