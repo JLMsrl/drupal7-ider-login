@@ -4,7 +4,7 @@
  * Install and uninstall functions for the IDer Login module.
  */
 
-module_load_include('inc', 'ider_login', 'includes/IDer_Server');
+module_load_include('inc', 'ider_login', 'includes/server');
 
 /**
  * Implements hook_install().
@@ -98,8 +98,16 @@ function ider_login_schema(){
                 'default' => '',
             ),
         ),
+        'foreign keys' => array(
+            'ider_user_data' => array(
+                'table' => 'users',
+                'columns' => array('uid' => 'uid'),
+            ),
+        ),
         'primary key' => array('uid')
     );
+
+    return $schema;
 
 }
 
