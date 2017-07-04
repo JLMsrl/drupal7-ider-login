@@ -170,14 +170,6 @@ function ider_login_form($form, &$form_state) {
         '#collapsed' => TRUE,
     );
 
-    $form['advanced_settings']['ider_login_field_mapping'] = array(
-        '#type' => 'textarea',
-        '#title' => t('Field Mapping'),
-        '#rows' => 6,
-        '#default_value' => variable_get('ider_login_field_mapping'),
-        '#required' => TRUE,
-    );
-
     $form['advanced_settings']['ider_login_campaigns_landing_pages'] = array(
         '#type' => 'textarea',
         '#title' => t('Campaigns Landing pages'),
