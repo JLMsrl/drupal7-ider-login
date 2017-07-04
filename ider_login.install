@@ -79,10 +79,14 @@ function ider_login_schema(){
     $schema['ider_user_data'] = array(
         'description' => 'IDer user data.',
         'fields' => array(
+            'id' => array(
+                'description' => 'The record ID.',
+                'type' => 'int',
+                'not null' => TRUE,
+            ),
             'uid' => array(
                 'description' => 'The user related UID.',
                 'type' => 'int',
-                'length' => 255,
                 'not null' => TRUE,
             ),
             'user_field' => array(
@@ -104,6 +108,7 @@ function ider_login_schema(){
                 'columns' => array('uid' => 'uid'),
             ),
         ),
+        'primary key' => array('id')
     );
 
     return $schema;
