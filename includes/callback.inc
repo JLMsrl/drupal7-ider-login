@@ -56,12 +56,16 @@ class IDER_Callback
         self::_login($user->uid);
 
         // update user data
-        self::_update_ider_sub((int)$user->uid, $userInfo->sub);
+        self::_update_ider_sub($user->uid, $userInfo->sub);
 
         if (user_is_logged_in()) {
 
+            // unset the sub and the email
+            unset($userInfo['sub']);
+            unset($userInfo['email']);
+
             // update the user info into IDer table
-            self::_update_ider_table($userInfo);
+            self::_update_ider_table($user->uid, $userInfo);
 
             // pass the controll to user defined functions and landing pages
             module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
@@ -112,12 +116,25 @@ class IDER_Callback
     /**
      * Add a record foreach field inside IDer table
      */
-    private static function _update_ider_table($userInfo)
+    private static function _update_ider_table($userID, $userInfo)
     {
 
         foreach ($userInfo as $key => $value) {
 
-            // TODO: update the new IDer table
+            // write the record uncoditionally
+            db_merge('ider_user_data')
+                ->key(
+                    array(
+                        'uid' => $userID,
+                        'user_field' => $key,
+                    )
+                )
+                ->fields(array(
+                    'uid' => $userID,
+                    'user_field' => $key,
+                    'user_value' => $value
+                ))
+                ->execute();
 
         }
 
