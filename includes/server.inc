@@ -21,6 +21,7 @@ class IDER_Server
         'enable_in_login' => true,
         'welcome_page' => '',
         'button_css' => '',
+        'campaigns_landing_pages' => ''
     );
 
 
