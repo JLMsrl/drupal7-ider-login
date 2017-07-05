@@ -196,7 +196,7 @@ function ider_login_form_alter(&$form, $form_state, $form_id) {
     if (($form_id == 'user_login' || $form_id == 'user_login_block') && variable_get('ider_login_enable_in_login')) {
 
         $form['ider_button'] = array(
-            '#markup' => t('<a href="' . url(\IDERConnect\IDEROpenIDClient::$IDERButtonURL) . '"><button type="button" class="ider-login-button form-submit">Login with IDer</button></a>'),
+            '#markup' => t('<a href="' . url(\IDERConnect\IDEROpenIDClient::$IDERButtonURL) . '" style="' . variable_get('ider_login_button_css') . '"><button type="button" class="ider-login-button form-submit">Login with IDer</button></a>'),
             '#weight' => 1000,
         );
 
