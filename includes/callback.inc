@@ -206,11 +206,14 @@ class IDER_Callback
         // User ID 1 is not allowed
         if ('1' === $userID) {
 
+            // user logout
+            self::user_logout();
+
             // set the error message
             self::access_denied("For security reasons, admin cannot login via IDer.");
 
-            // logout an user redirecting it
-            user_logout();
+            // refresh
+            drupal_goto();
 
         } else {
 
