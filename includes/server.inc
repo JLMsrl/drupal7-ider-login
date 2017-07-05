@@ -66,8 +66,6 @@ class IDER_Server
             $iderconnect->authenticate();
             $userInfo = $iderconnect->requestUserInfo();
             IDER_Callback::handler($userInfo);
-            exit;
-
         } catch (Exception $e) {
             IDER_Callback::access_denied($e->getMessage());
         } finally {

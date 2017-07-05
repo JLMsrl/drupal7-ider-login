@@ -12,8 +12,7 @@ class IDER_Callback
 
         $userInfo = IDER_UserInfoManager::normalize($userInfo);
 
-        // TODO callback function
-        $handled = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope'])[0];
+        $handled = reset(module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']));
 
         // if user function hadn't been exclusive let's resume the standard flow
         if (!$handled) {
@@ -26,11 +25,10 @@ class IDER_Callback
     // register or authenticate user
     static function defaultHandler($userInfo)
     {
-        // check if user exists by email
         // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
 
+        // check if user exists by email
         $user = user_load_by_mail($userInfo->email);
-
 
         // check if user exists by sub
         if (!$user) {
@@ -41,7 +39,8 @@ class IDER_Callback
                     'ider_sub' => $userInfo->sub
                 )
             );
-            // TODO: leverage future endpoint to check which side changed the email: local->no access and error msg, remote->update email
+
+            $user = reset($user);
 
         }
 
@@ -52,20 +51,38 @@ class IDER_Callback
 
         }
 
+        // update user sub
+        self::_update_ider_sub($user->uid, $userInfo->sub);
+
+        // unset the sub
+        unset($userInfo->sub);
+
+        // check for email changes
+        if($user->mail !== $userInfo->email){
+            $ciao = self::_local_mail_identical($user->uid, $user->mail);
+            if($ciao){
+
+                self::_update_user_mail($user->uid, $userInfo->email);
+
+            }else{
+
+                self::user_logout();
+
+                self::access_denied('Update the IDer email first!');
+
+                drupal_goto();
+
+            }
+
+        }
+
         // Log the User In
         self::_login($user->uid);
 
-        // update user data
-        self::_update_ider_sub($user->uid, $userInfo->sub);
+        // update the user info into IDer table
+        self::_update_ider_table($user->uid, $userInfo);
 
         if (user_is_logged_in()) {
-
-            // unset the sub and the email
-            unset($userInfo['sub']);
-            unset($userInfo['email']);
-
-            // update the user info into IDer table
-            self::_update_ider_table($user->uid, $userInfo);
 
             // pass the controll to user defined functions and landing pages
             module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
@@ -84,32 +101,38 @@ class IDER_Callback
      */
     static function access_denied($errormsg)
     {
+
         if (is_null($errormsg)) {
             $errormsg = "Error authenticating user";
         }
 
         drupal_set_message(t($errormsg), 'error');
 
-        drupal_goto();
+    }
 
+    /**
+     * Logout the user
+     */
+    static function user_logout()
+    {
+        global $user;
+        module_invoke_all('user_logout', $user);
+        @session_destroy();
     }
 
     /**
      * Update IDer database sub
      */
-    private static function _update_ider_sub($userId, $userSub)
+    private static function _update_ider_sub($userID, $userSub)
     {
-
-        // load the user by its ID
-        $account = user_load($userId);
+        // load the accountc
+        $account = user_load($userID);
 
         // build the key value edit array
         $edit = array('ider_sub' => $userSub);
 
         // save the user to the database edited
         user_save($account, $edit);
-
-        // TMP: filling missing fields
 
     }
 
@@ -152,8 +175,8 @@ class IDER_Callback
         // build the new user Array()
         $newUser = array(
             'ider_sub' => $userInfo->sub,
-            'name' => $userInfo->mail,
-            'mail' => $userInfo->mail,
+            'name' => $userInfo->email,
+            'mail' => $userInfo->email,
             'pass' => $random_password,
             'status' => 1,
             'access' => REQUEST_TIME,
@@ -164,7 +187,7 @@ class IDER_Callback
         $user = user_save(NULL, $newUser);
 
         // destroy eventual login sessions
-        module_invoke_all('user_logout', $user);
+        self::user_logout();
 
         return $user;
 
@@ -199,6 +222,46 @@ class IDER_Callback
             return true;
 
         }
+
+    }
+
+    /**
+     * Check if the local mail are identical
+     */
+    private static function _local_mail_identical($userID, $userMail)
+    {
+        $areIdentical = true;
+
+        $iderLocalEmail = db_select('ider_user_data', 'i')
+            ->fields('i')
+            ->condition('id', $userID, '=')
+            ->condition('user_field', 'email', '=')
+            ->condition('user_value', $userMail, '=')
+            ->execute()
+            ->fetchAssoc();
+
+        if(!$iderLocalEmail){
+            $areIdentical = false;
+        }
+
+        return $areIdentical;
+
+    }
+
+    /**
+     * Update the old mail with a new one
+     */
+    private static function _update_user_mail($userID, $mail)
+    {
+
+        // load the accountc
+        $account = user_load($userID);
+
+        // build the key value edit array
+        $edit = array('mail' => $mail);
+
+        // save the user to the database edited
+        user_save($account, $edit);
 
     }
 
