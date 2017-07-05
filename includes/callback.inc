@@ -59,8 +59,8 @@ class IDER_Callback
 
         // check for email changes
         if($user->mail !== $userInfo->email){
-            $ciao = self::_local_mail_identical($user->uid, $user->mail);
-            if($ciao){
+
+            if(self::_local_mail_identical($user->uid, $user->mail)){
 
                 self::_update_user_mail($user->uid, $userInfo->email);
 
@@ -116,8 +116,11 @@ class IDER_Callback
     static function user_logout()
     {
         global $user;
+
         module_invoke_all('user_logout', $user);
+
         @session_destroy();
+
     }
 
     /**
@@ -204,6 +207,7 @@ class IDER_Callback
 
             // set the error message
             self::access_denied("For security reasons, admin cannot login via IDer.");
+
             // logout an user redirecting it
             user_logout();
 
@@ -213,7 +217,8 @@ class IDER_Callback
             if (!user_is_logged_in()) {
 
                 // make the key value pairs array with the info of the user to log in
-                $formState = array('uid' => (int)$userID);
+                $formState = array('uid' => $userID);
+
                 // submit the data
                 user_login_submit(array(), $formState);
 
@@ -241,7 +246,9 @@ class IDER_Callback
             ->fetchAssoc();
 
         if(!$iderLocalEmail){
+
             $areIdentical = false;
+
         }
 
         return $areIdentical;
