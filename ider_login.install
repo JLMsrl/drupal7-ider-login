@@ -81,7 +81,8 @@ function ider_login_schema(){
         'fields' => array(
             'id' => array(
                 'description' => 'The record ID.',
-                'type' => 'int',
+                'type' => 'serial',
+                'unsigned' => TRUE,
                 'not null' => TRUE,
             ),
             'uid' => array(
