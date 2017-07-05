@@ -120,6 +120,7 @@ class IDER_Callback
         module_invoke_all('user_logout', $user);
 
         @session_destroy();
+        @session_start();
 
     }
 
@@ -239,7 +240,7 @@ class IDER_Callback
 
         $iderLocalEmail = db_select('ider_user_data', 'i')
             ->fields('i')
-            ->condition('id', $userID, '=')
+            ->condition('uid', $userID, '=')
             ->condition('user_field', 'email', '=')
             ->condition('user_value', $userMail, '=')
             ->execute()
