@@ -176,6 +176,9 @@ function ider_login_form($form, &$form_state) {
         '#rows' => 6,
         '#default_value' => variable_get('ider_login_campaigns_landing_pages'),
         '#required' => FALSE,
+        '#attributes' => array(
+            'placeholder' => 'scope=redirect'
+        )
     );
 
     $form['advanced_settings']['ider_login_button_css'] = array(
@@ -184,6 +187,10 @@ function ider_login_form($form, &$form_state) {
         '#rows' => 6,
         '#default_value' => variable_get('ider_login_button_css'),
         '#required' => FALSE,
+        '#attributes' => array(
+            'placeholder' => 'rule: value;
+rule: value;'
+        )
     );
 
     return system_settings_form($form);
