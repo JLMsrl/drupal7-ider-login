@@ -239,8 +239,12 @@ function ider_login_before_callback_handler($userInfo, $scopes) {
 /* If you need custom data handler you can hook here. $handler = true will prevent the default action. */
 function ider_login_after_callback_handler($userInfo, $scopes) {
 
-    if (in_array('yourscope', $scopes)) {
-        // do something...
+    if(!empty($scopes)){
+
+        if (in_array('yourscope', $scopes)) {
+            // do something...
+        }
+
     }
 
     $landingPages = variable_get('ider_login_campaigns_landing_pages');
