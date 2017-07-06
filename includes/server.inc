@@ -17,7 +17,6 @@ class IDER_Server
         'client_id' => '',
         'client_secret' => '',
         'extra_scopes' => '',
-        'redirect_to_page' => true,
         'enable_in_login' => true,
         'welcome_page' => '',
         'button_css' => '',
