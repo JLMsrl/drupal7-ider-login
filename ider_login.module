@@ -200,26 +200,23 @@ rule: value;'
  * Implements hook_form_alter().
  */
 function ider_login_form_alter(&$form, $form_state, $form_id) {
+
     if (($form_id == 'user_login' || $form_id == 'user_login_block') && variable_get('ider_login_enable_in_login')) {
 
-        $form['ider_button'] = array(
-            '#markup' => t('<a href="' . url(\IDERConnect\IDEROpenIDClient::$IDERButtonURL) . '" style="' . variable_get('ider_login_button_css') . '"><button type="button" class="ider-login-button form-submit">Login with IDer</button></a>'),
-            '#weight' => 1000,
-        );
+        // show only if auth info are set
+        if(!empty(variable_get('ider_login_client_id')) && !empty(variable_get('ider_login_client_secret')) && !empty(variable_get('ider_login_extra_scopes'))) {
 
-        /*
-        $form['submit_ider'] = array(
-            '#type' => 'submit',
-            '#value' => t('Login with IDer'),
-            '#attributes'=>array('class' => array('ider-login-button')),
-            '#submit' => array('ider_login_submit_redirect'),
-            '#limit_validation_errors' => array(),
-            '#weight' => 1000,
-        );
-        */
+            $form['ider_button'] = array(
+                '#markup' => t('<a href="' . url(\IDERConnect\IDEROpenIDClient::$IDERButtonURL) . '" style="' . variable_get('ider_login_button_css') . '"><button type="button" class="ider-login-button form-submit">Login with IDer</button></a>'),
+                '#weight' => 1000,
+            );
+
+        }
 
         drupal_add_css(drupal_get_path('module', 'ider_login') . '/assets/css/ider_login.css');
+
     }
+
 }
 
 function ider_login_auth(){
