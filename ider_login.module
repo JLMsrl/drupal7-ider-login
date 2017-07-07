@@ -266,5 +266,13 @@ function ider_login_after_callback_handler($userInfo, $scopes) {
         }
     }
 
+}
+
+/* TODO: custom data extractor API for other modules */
+function ider_login_user_data($uid){
+
+    $userData = [];
+
+    return $userData;
 
 }
