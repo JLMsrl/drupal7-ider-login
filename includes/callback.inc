@@ -148,20 +148,26 @@ class IDER_Callback
 
         foreach ($userInfo as $key => $value) {
 
-            // write the record uncoditionally
-            db_merge('ider_user_data')
-                ->key(
-                    array(
+            try {
+
+                // write the record uncoditionally
+                db_merge('ider_user_data')
+                    ->key(
+                        array(
+                            'uid' => $userID,
+                            'user_field' => $key,
+                        )
+                    )
+                    ->fields(array(
                         'uid' => $userID,
                         'user_field' => $key,
-                    )
-                )
-                ->fields(array(
-                    'uid' => $userID,
-                    'user_field' => $key,
-                    'user_value' => $value
-                ))
-                ->execute();
+                        'user_value' => $value
+                    ))
+                    ->execute();
+
+            }catch (Exception $e){
+
+            }
 
         }
 
