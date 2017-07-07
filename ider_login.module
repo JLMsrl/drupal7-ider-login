@@ -8,8 +8,6 @@
 require_once 'vendor/autoload.php';
 module_load_include('inc', 'ider_login', 'includes/server');
 
-define('IDER_SERVER', 'https://qaoid.ider.com/core');
-
 if (!defined('IDER_MODULE_FILE')) {
     define('IDER_MODULE_FILE', __FILE__);
 }
