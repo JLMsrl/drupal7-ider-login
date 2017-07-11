@@ -17,7 +17,7 @@ if (!defined('IDER_MODULE_DIR')) {
 }
 
 if (!defined('IDER_CLIENT_VERSION')) {
-    define('IDER_CLIENT_VERSION', '0.0.4');
+    define('IDER_CLIENT_VERSION', '0.1.4');
 }
 
 if (!defined('IDER_SITE_DOMAIN')) {
