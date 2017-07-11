@@ -221,6 +221,7 @@ function ider_login_auth(){
     IDER_Server::IDerOpenIdClientHandler();
 }
 
+
 /**
  * Add custom hooks
  */
@@ -266,11 +267,33 @@ function ider_login_after_callback_handler($userInfo, $scopes) {
 
 }
 
-/* TODO: custom data extractor API for other modules */
-function ider_login_user_data($uid){
+/**
+ * This function returns the UserData by passing the UID of the user related and returns a key, value pair where the key is the OID field name
+ */
+function ider_login_user_data($userID){
 
-    $userData = [];
+    $userData = db_select('ider_user_data', 'i')
+        ->fields('i')
+        ->condition('uid', $userID, '=')
+        ->execute()
+        ->fetchAll();
 
-    return $userData;
+    if(!$userData){
+
+        throw new Exception("User not found!");
+
+    }
+
+    $newUserData = [];
+
+    foreach ($userData as $singleData){
+
+        $arrayKey = $singleData->user_field;
+        $arrayContent = $singleData->user_value;
+        $newUserData[$arrayKey] = $arrayContent;
+
+    }
+
+    return $newUserData;
 
 }
