@@ -1,6 +1,6 @@
 # Drupal 7.x IDer login
 
-This plugin provides functionality to register and connect to your WordPress via IDer Service.
+This plugin provides functionality to register and connect to your Drupal 7 via IDer Service.
 
 # How it works?
   1. First of all you need to create a profile in the [IDer](https://ider.com) website.
