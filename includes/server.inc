@@ -1,8 +1,23 @@
 <?php
 
 /**
+ * Jlm SRL
  *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
+ *
+ ********************************************************************
+ * @category   Jlmsrl
+ * @package    Jlmsrl_Iderlogin
+ * @author Emanuele Coppola <plugins@jlm.srl>
+ * @copyright  Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
+
 class IDER_Server
 {
 

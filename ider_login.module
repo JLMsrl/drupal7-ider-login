@@ -1,8 +1,22 @@
 <?php
+
 /**
-* @file
-* This plugin provides functionality to register and connect to your Drupal via IDer Service.
-*/
+ * Jlm SRL
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
+ *
+ ********************************************************************
+ * @category   Jlmsrl
+ * @package    Jlmsrl_Iderlogin
+ * @author Emanuele Coppola <plugins@jlm.srl>
+ * @copyright  Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
+ */
 
 // require libs
 require_once 'vendor/autoload.php';
@@ -17,7 +31,7 @@ if (!defined('IDER_MODULE_DIR')) {
 }
 
 if (!defined('IDER_CLIENT_VERSION')) {
-    define('IDER_CLIENT_VERSION', '0.1.4');
+    define('IDER_CLIENT_VERSION', '0.1.5');
 }
 
 if (!defined('IDER_SITE_DOMAIN')) {

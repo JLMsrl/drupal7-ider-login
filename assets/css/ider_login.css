@@ -1,3 +1,21 @@
+/**
+ * Jlm SRL
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
+ *
+ ********************************************************************
+ * @category   Jlmsrl
+ * @package    Jlmsrl_Iderlogin
+ * @author Davide Lattanzio <davide.lattanzio@jlm.srl>
+ * @copyright  Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
+ */
+
 .ider-login-button {
     text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799!important;
     border-color: #0073aa #006799 #006799!important;
