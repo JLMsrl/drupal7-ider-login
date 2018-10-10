@@ -27,7 +27,7 @@ class IDER_Helpers
         $text = "[" .strftime("%Y-%m-%d %H:%M:%S") . "] " . $text . "\n";
 
         // add basepath
-        $filename = IDER_PLUGIN_DIR . 'logs/' . $filename;
+        $filename = IDER_MODULE_DIR . 'logs/' . $filename;
 
         // add the point
         $ext = '.' . $ext;
