@@ -14,7 +14,7 @@
  * @category   Jlmsrl
  * @package    Jlmsrl_Iderlogin
  * @author Emanuele Coppola <plugins@jlm.srl>
- * @copyright  Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @copyright  Copyright (c) 2016 - 1018 Jlm SRL (http://www.jlm.srl)
  * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
 
@@ -31,7 +31,7 @@ if (!defined('IDER_MODULE_DIR')) {
 }
 
 if (!defined('IDER_CLIENT_VERSION')) {
-    define('IDER_CLIENT_VERSION', '0.1.5');
+    define('IDER_CLIENT_VERSION', '1.1.0');
 }
 
 if (!defined('IDER_SITE_DOMAIN')) {

@@ -14,7 +14,7 @@
  * @category   Jlmsrl
  * @package    Jlmsrl_Iderlogin
  * @author Emanuele Coppola <plugins@jlm.srl>
- * @copyright  Copyright (c) 2016 - 2017 Jlm SRL (http://www.jlm.srl)
+ * @copyright  Copyright (c) 2016 - 1018 Jlm SRL (http://www.jlm.srl)
  * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
 
@@ -70,6 +70,8 @@ class IDER_Server
 
     public static function IDerOpenIdClientHandler()
     {
+        global $base_url;
+
         $queryVars = drupal_get_query_parameters();
         try {
 
@@ -77,6 +79,10 @@ class IDER_Server
             if (!empty($queryVars['scope'])) {
                 $iderconnect->setScope($queryVars['scope']);
             }
+
+            //
+            $iderconnect->setBaseUrl($base_url);
+
             $iderconnect->authenticate();
             $userInfo = $iderconnect->requestUserInfo();
             IDER_Callback::handler($userInfo);
