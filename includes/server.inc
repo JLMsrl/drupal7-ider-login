@@ -58,39 +58,56 @@ class IDER_Server
      */
     public static function getIDerOpenIdClientIstance()
     {
+
+        global $base_url;
+
         \IDERConnect\IDEROpenIDClient::$IDERLogFile = drupal_get_path('module', 'ider_login') . '/log/ider-connect.log';
+
+        // Override the base URL with the WP one.
+        \IDERConnect\IDEROpenIDClient::$BaseUrl = $base_url;
 
         if (is_null(\IDERConnect\IDEROpenIDClient::$_instance)) {
             \IDERConnect\IDEROpenIDClient::$_instance = new \IDERConnect\IDEROpenIDClient(variable_get('ider_login_client_id'), variable_get('ider_login_client_secret'), variable_get('ider_login_extra_scopes'));
         }
 
         return \IDERConnect\IDEROpenIDClient::$_instance;
+
     }
 
 
     public static function IDerOpenIdClientHandler()
     {
-        global $base_url;
 
         $queryVars = drupal_get_query_parameters();
+
         try {
 
             $iderconnect = IDER_Server::getIDerOpenIdClientIstance();
+
             if (!empty($queryVars['scope'])) {
+
                 $iderconnect->setScope($queryVars['scope']);
+
             }
 
             //
-            $iderconnect->setBaseUrl($base_url);
 
             $iderconnect->authenticate();
+
             $userInfo = $iderconnect->requestUserInfo();
+
             IDER_Callback::handler($userInfo);
+
         } catch (Exception $e) {
+
             IDER_Callback::access_denied($e->getMessage());
+
         } finally {
+
             exit;
+
         }
+
     }
 
 
