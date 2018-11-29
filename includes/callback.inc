@@ -14,7 +14,7 @@
  * @category   Jlmsrl
  * @package    Jlmsrl_Iderlogin
  * @author Emanuele Coppola <plugins@jlm.srl>
- * @copyright  Copyright (c) 2016 - 1018 Jlm SRL (http://www.jlm.srl)
+ * @copyright  Copyright (c) 2016 - 2018 Jlm SRL (http://www.jlm.srl)
  * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
 
@@ -26,7 +26,10 @@ class IDER_Callback
 
         $userInfo = IDER_UserInfoManager::normalize($userInfo);
 
-        $handled = reset(module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']));
+        $beforeCallbackHandler = module_invoke_all('before_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+
+        // Only variables should be passed by reference to reset method
+        $handled = reset($beforeCallbackHandler);
 
         // if user function hadn't been exclusive let's resume the standard flow
         if (!$handled) {
@@ -98,10 +101,14 @@ class IDER_Callback
 
         if (user_is_logged_in()) {
 
-            // pass the controll to user defined functions and landing pages
-            module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+            // pass the control to user defined functions and landing pages
+            if(array_key_exists('openid_connect_scope', $_SESSION)) {
 
-            drupal_goto(url(variable_get('ider_login_welcome_page')));
+                module_invoke_all('after_callback_handler', $userInfo, $_SESSION['openid_connect_scope']);
+
+            }
+
+            drupal_goto(url(variable_get('ider_login_welcome_page'), ['absolute' => true]));
 
             exit;
 
