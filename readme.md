@@ -13,7 +13,7 @@ This plugin provides functionality to register and connect to your Drupal 7 via 
 1. Download the module files, and trough the admin dashboard upload the files into your Drupal 7 installation.
 2. Enable the module through the 'Modules' page in Drupal 7.
 3. Go to the IDer Login configuration page.
-4. Configure the plugin as descripted. You need to create a profile in the [IDer](https://ider.com).
+4. Configure the plugin as described, to do this you need to create a profile in the [IDer](https://ider.com).
 5. With the data collected during the profile creation process fill in the Client ID, Client Secret and Campaign ID fields.
 6. Change the other settings if you want like button CSS etc...
 
