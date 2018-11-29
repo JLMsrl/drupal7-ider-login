@@ -14,7 +14,7 @@
  * @category   Jlmsrl
  * @package    Jlmsrl_Iderlogin
  * @author Emanuele Coppola <plugins@jlm.srl>
- * @copyright  Copyright (c) 2016 - 1018 Jlm SRL (http://www.jlm.srl)
+ * @copyright  Copyright (c) 2016 - 2018 Jlm SRL (http://www.jlm.srl)
  * @license    https://www.ider.com/IDER-LICENSE-COMMUNITY.txt
  */
 
@@ -31,7 +31,7 @@ if (!defined('IDER_MODULE_DIR')) {
 }
 
 if (!defined('IDER_CLIENT_VERSION')) {
-    define('IDER_CLIENT_VERSION', '1.1.0');
+    define('IDER_CLIENT_VERSION', '1.1.1');
 }
 
 if (!defined('IDER_SITE_DOMAIN')) {
@@ -57,7 +57,6 @@ function ider_login_init() {
  */
 function ider_login_help($path, $arg) {
     if($path == 'admin/help#ider_login'){
-        $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'gauth');
         $output = '<h3>' . t('About') . '</h3>';
         $output .= '<p>' . t("This module allows users to login through the IDer services.") . '</p>';
         $output .= '<h3>' . t('Setup') . '</h3>';
@@ -231,8 +230,18 @@ function ider_login_form_alter(&$form, $form_state, $form_id) {
 
 }
 
+/**
+ * The function shared by the two links.
+ * Called only if the user is not logged in.
+ */
 function ider_login_auth(){
-    IDER_Server::IDerOpenIdClientHandler();
+
+    if(!user_is_logged_in()) {
+
+        IDER_Server::IDerOpenIdClientHandler();
+
+    }
+
 }
 
 
