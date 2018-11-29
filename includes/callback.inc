@@ -42,6 +42,9 @@ class IDER_Callback
     // register or authenticate user
     static function defaultHandler($userInfo)
     {
+
+        global $base_url;
+
         // ps: if user uses same email on a new IDer profile the sub will be updated on the old profile
 
         // check if user exists by email
@@ -108,7 +111,7 @@ class IDER_Callback
 
             }
 
-            drupal_goto(url(variable_get('ider_login_welcome_page'), ['absolute' => true]));
+            drupal_goto(rtrim($base_url, '\/') . '/' . variable_get('ider_login_welcome_page'));
 
             exit;
 
